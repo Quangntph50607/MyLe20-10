@@ -818,25 +818,38 @@ let galaxyAudio = null;
 
 function preloadGalaxyAudio() {
   const audioSources = [
-   "https://youtu.be/f-VsoLm4i5c?si=xkAcbcdfNBe_2J2t"
+    // Link MP3 thật (không dùng YouTube/Spotify)
+    'https://cdn.jsdelivr.net/gh/napthevn/cdn-audio/romantic-piano.mp3',
+    'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+    'https://www.bensound.com/bensound-music/bensound-sunny.mp3'
   ];
 
   const randomIndex = Math.floor(Math.random() * audioSources.length);
   const selectedSrc = audioSources[randomIndex];
 
-  galaxyAudio = new Audio(selectedSrc);
+  galaxyAudio = document.getElementById('bg-music');
+  if (!galaxyAudio) {
+    galaxyAudio = new Audio();
+    galaxyAudio.id = 'bg-music';
+  }
+  galaxyAudio.src = selectedSrc;
   galaxyAudio.loop = true;
   galaxyAudio.volume = 1.0;
-
-  // Preload không autoplay
-  galaxyAudio.preload = "auto";
+  galaxyAudio.preload = 'auto';
 }
 
 function playGalaxyAudio() {
   if (galaxyAudio) {
-    galaxyAudio.play().catch(err => {
-      console.warn("Audio play blocked or delayed:", err);
+    console.log('🎵 Attempting to play audio:', galaxyAudio.src);
+    galaxyAudio.volume = 0.5; // Giảm volume để test
+    galaxyAudio.play().then(() => {
+      console.log('✅ Audio started successfully');
+    }).catch(err => {
+      console.error('❌ Audio play failed:', err);
+      console.log('💡 Try clicking the planet again or check browser audio settings');
     });
+  } else {
+    console.error('❌ Audio element not found');
   }
 }
 preloadGalaxyAudio();
@@ -1253,7 +1266,7 @@ function onCanvasClick(event) {
     introStarted = true;
     fadeInProgress = true;
     document.body.classList.add("intro-started");
-    playGalaxyAudio(); // Khi script load, preload nhạc sẵn
+    playGalaxyAudio(); // Phát nhạc khi người dùng click lần đầu
 
     startCameraAnimation();
 
